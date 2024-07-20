@@ -180,14 +180,16 @@ export const playgroundPlugin = (
         firstFilename
       );
       const previewHeight = config.previewHeight ?? '120px';
+      // in the case `lazy` is false, we need to keep the ">" character on the
+      // line right after the last attribute or else markdown will not render
+      // the closing tag correctly because it will be in a  `<p>></p>`.
       return `
-    <litdev-example ${sandboxUrl ? `sandbox-base-url='${sandboxUrl}'` : ''}
+    <litdev-example ${sandboxUrl ? `sandbox-base-url="${sandboxUrl}"` : ''}
       style="--litdev-example-editor-lines-ts:${numVisibleLines.ts};
              --litdev-example-editor-lines-js:${numVisibleLines.js};
-             --litdev-example-preview-height:${previewHeight}"
-      project=${project}
-      ${lazy ? 'lazy' : ''}
-    >
+             --litdev-example-preview-height:${previewHeight};"
+      project="${project}"
+      ${lazy ? 'lazy' : ''}>
     </litdev-example>
   `.trim();
     }
