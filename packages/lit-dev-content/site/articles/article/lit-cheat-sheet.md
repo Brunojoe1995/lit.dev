@@ -320,6 +320,116 @@ You can set shadow root options passed to `Element.attachShadow()` by overriding
 
 ## Properties and State
 
+### Reactive Properties
+
+Reactive properties are properties within a component that automatically trigger
+a re-render when they change. These properties can be set externally, from
+outside the component's boundary.
+
+They also handle attributes by accepting them and converting them into
+corresponding properties.
+
+You can define a reactive property with the <ts-js><span slot="ts"><code>@property</code> decorator</span><span slot="js"><code>static properties = { propertyName: {...}}</code> code block and initializing them in the <code>constructor()</code></span></ts-js>.
+
+
+{% playground-ide "articles/lit-cheat-sheet/reactive-properties", true %}
+
+**Related Documentation & Topics:**
+
+- [Reactive Properties](/docs/components/properties/)
+- [Public reactive properties](/docs/components/properties/#declare)
+- [Attributes](/docs/components/properties/#attributes)
+- [Custom property accessors](/docs/components/properties/#attributes)
+- [Customizing change detection](/docs/components/properties/#haschanged)
+- [Reactivity Tutorial](/tutorials/reactivity/)
+- [Custom Attribute Converters Tutorial](/tutorials/custom-attribute-converter/)
+- [What Are Elements Video](https://www.youtube.com/watch?v=x_mixcGEia4)
+- [Introduction to Lit - Reactive Properties Video](https://www.youtube.com/watch?v=uzFakwHaSmw&t=576s)
+
+### Reactive State
+
+Reactive state is a property that is private to the component and is not exposed
+to the outside world. These properties are used to store internal state of a
+component that should trigger a re-render of the Lit lifecycle when they change.
+
+You can define a reactive property with the <ts-js><span slot="ts"><code>@state</code> decorator</span><span slot="js"><code>static properties = { propertyName: {state: true, ...}}</code> code block and setting the <code>state: true</code> flag in the property's info. You can initialize them in the <code>constructor()</code></span></ts-js>.
+
+{% playground-ide "articles/lit-cheat-sheet/reactive-state", true %}
+
+**Related Documentation & Topics:**
+
+- [Reactive Properties](/docs/components/properties/)
+- [Internal Reactive State](/docs/components/properties/#internal-reactive-state)
+- [Customizing change detection](/docs/components/properties/#haschanged)
+- [Reactivity Tutorial](/tutorials/reactivity/)
+- [What Are Elements Video](https://www.youtube.com/watch?v=x_mixcGEia4)
+- [Introduction to Lit - Reactive Properties Video](https://www.youtube.com/watch?v=uzFakwHaSmw&t=576s)
+
+### Re-render an Array or Object Change
+
+Arrays are objects in JavaScript, and Lit's default change detection uses strict
+equality to determine if an array has changed. If you need to re-render a
+component when an array is mutated with something like `.push()` or `.pop()`,
+you will need to let Lit know that the array has changed.
+
+The most common ways to do this are:
+
+- Use the `requestUpdate()` method to manually trigger a re-render
+- Create a new array / object reference
+
+{% playground-ide "articles/lit-cheat-sheet/rerender-array-change", true %}
+
+{% aside "warn" %}
+
+Custom `hasChanged()` methods in the reactive property definition won't help
+much here.
+
+The `hasChanged()` function is only called when the property is set, not when
+the property is mutated. This would only be helpful when an array or object has
+a new reference assigned to it and you _don't_ want to trigger a re-render.
+
+If this is your use case, you might generally be better off using a [`repeat()`
+directive](#re-rendering-lists-efficiently).
+
+{% endaside %}
+
+**Related Documentation & Topics:**
+
+- [Lifecycle - Triggering an update](/docs/components/lifecycle/#reactive-update-cycle-triggering)
+- [Rendering Arrays](/docs/templates/lists/#rendering-arrays)
+- [Reactivity Tutorial - Triggerin an update](/tutorials/reactivity/#3)
+- [Working With Lists Tutorial](/tutorials/working-with-lists/)
+
+### Custom Attribute Converters
+
+In advanced cases, you may need to convert an attribute value to a property in
+a special way and vice versa. You can do this with a custom attribute converter.
+
+{% playground-ide "articles/lit-cheat-sheet/custom-attribute-converter", true %}
+
+**Related Documentation & Topics:**
+
+- [Reactive properties - Providing a custom converter](/docs/components/properties/#conversion-converter)
+- [Reactive properties - Using the default converter](/docs/components/properties/#conversion-type)
+- [Attributes](/docs/components/properties/#attributes)
+- [Custom Attribute Converters Tutorial](/tutorials/custom-attribute-converter/)
+- [Reactive Properties](/docs/components/properties/)
+- [Public reactive properties](/docs/components/properties/#declare)
+- [Custom attribute converter snippet](/playground/#sample=examples/properties-custom-converter)
+
+### Context
+
+If you need to pass data down to a subtree without using properties or "prop
+drilling", you might want to use
+[`@lit/context`](https://www.npmjs.com/package/@lit/context).
+
+{% playground-ide "examples/context-consume-provide", true %}
+
+**Related Documentation & Topics:**
+
+- [Context](/docs/data/context/)
+- [WCCG Context Community Protocol](https://github.com/webcomponents-cg/community-protocols/blob/main/proposals/context.md) (external)
+
 ## Lifecycle
 
 ### Lifecycle order
@@ -424,6 +534,8 @@ All Lit elements have asynchronous lifecycles. You need to wait for the `updateC
 - [updateComplete()](/docs/components/lifecycle/#updatecomplete)
 - [requestUpdate()](/docs/components/lifecycle/#requestUpdate)
 
+## Events
+
 ### Adding listeners to host element or globally
 
 A common pattern is to add event listeners to the host element or globally in the `connectedCallback` and remove them in the `disconnectedCallback`.
@@ -486,3 +598,4 @@ If you want an event to bubble through shadow Roots, set `composed: true`.
 - [Expressions – Event listener expressions](/docs/templates/expressions/#event-listener-expressions)
 - [Events](/docs/components/events/)
 - [Customizing event listener options](/docs/components/events/#event-options-decorator)
+
